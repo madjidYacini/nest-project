@@ -1,4 +1,5 @@
 #!/bin/bash
+
 compose_content=$(cat ./docker-compose.yml)
 
 postgres_user=$(echo "$compose_content" | grep -oP 'POSTGRES_USER: \K(.+)')
@@ -7,8 +8,15 @@ postgres_db=$(echo "$compose_content" | grep -oP 'POSTGRES_DB: \K(.+)')
 
 env_sample_content=$(cat util/.env.sample)
 
-replaced_content=$(echo "$env_sample_content" | sed "s/{POSTGRES_USER}/$postgres_user/g; s/{POSTGRES_PASSWORD}/$postgres_password/g; s/{POSTGRES_DB}/$postgres_db/g")
+variables=$(grep -oP '{\w+}' util/.env.sample | sed 's/{\|}//g')
+
+replaced_content="$env_sample_content"
+for variable in $variables; do
+    value=$(eval "echo \$$variable")
+    replaced_content=$(echo "$replaced_content" | sed "s/{$variable}/$value/g")
+done
 
 echo "$replaced_content" > .env
 
-echo "Le fichier .env a été généré avec succès à la racine du projet."
+
+echo "Le fichier .env.production a été généré avec succès à la racine du projet."
