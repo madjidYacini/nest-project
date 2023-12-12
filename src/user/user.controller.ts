@@ -6,12 +6,11 @@ import {
   HttpStatus,
   Param,
   Patch,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
-import { JwtGuard } from 'src/auth/guard';
-import { GetUser } from 'src/decorator/';
+import { JwtGuard } from '../auth/guard';
+import { GetUser } from '../decorator/';
 import { UserService } from './user.service';
 import { EditUserDto } from './dto';
 import { UserFactory } from './user.factory';
@@ -31,6 +30,8 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   @Patch(':id')
   async editUser(@Body() dto: EditUserDto, @Param('id') userId: string) {
+    console.log(userId);
+
     try {
       const entity = await this.userService.editUser(parseInt(userId, 10), dto);
       const userDto = this.factory.entityToDto(entity);
