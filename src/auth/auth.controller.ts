@@ -1,4 +1,11 @@
-import { Body, Controller, Logger, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Logger,
+  Post,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto, AuthSigninDto, AuthSignupDto } from './dto';
 import { AuthFactory } from './auth.factory';
@@ -10,8 +17,9 @@ export class AuthController {
     private authService: AuthService,
     private authFactory: AuthFactory,
   ) {}
+  @HttpCode(HttpStatus.CREATED)
   @Post('signup')
-  async signup(@Body() dto: AuthSignupDto) {
+  async signup(@Body() dto: AuthSignupDto): Promise<AuthSigninDto> {
     try {
       const entity = await this.authService.signup(dto);
       this.logger.verbose(`User ${dto.email} saved successfully`);
@@ -21,6 +29,7 @@ export class AuthController {
       throw error;
     }
   }
+  @HttpCode(HttpStatus.OK)
   @Post('signin')
   async signin(@Body() dto: AuthDto): Promise<AuthSigninDto> {
     try {

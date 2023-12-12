@@ -13,4 +13,7 @@ export class AuthSigninDto extends AuthBaseDto {
 
   @IsString()
   updatedAt: Date;
+
+  @IsString()
+  token: Date;
 }
